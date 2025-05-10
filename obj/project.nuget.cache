@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "U66rdmYKEV0=",
+  "success": true,
+  "projectFilePath": "/Volumes/My Projects/UpShareBackend/UpShareBackend.csproj",
+  "expectedPackageFiles": [
+    "/Users/diveneshshamugam/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.2/microsoft.extensions.dependencyinjection.abstractions.8.0.2.nupkg.sha512",
+    "/Users/diveneshshamugam/.nuget/packages/microsoft.extensions.logging.abstractions/8.0.2/microsoft.extensions.logging.abstractions.8.0.2.nupkg.sha512",
+    "/Users/diveneshshamugam/.nuget/packages/npgsql/9.0.3/npgsql.9.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
