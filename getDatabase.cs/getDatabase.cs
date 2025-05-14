@@ -14,25 +14,42 @@ namespace MyProject.Database
             return dataSource;
         }
 
-        public async Task TestDatabase()
+       public async Task<List<Dictionary<string, object>>> getItemsListed()
         {
+            var items = new List<Dictionary<string, object>>();
             try
             {
-                await using var dataSource = await ConnectDatabase();
+                    await using var dataSource = await ConnectDatabase();
+ 
+                    await using var command = dataSource.CreateCommand("SELECT * FROM items");
+                    await using var reader = await command.ExecuteReaderAsync();
+                    
+                    
 
-                await using var command = dataSource.CreateCommand("SELECT * FROM users");
-                await using var reader = await command.ExecuteReaderAsync();
-                
-                while (await reader.ReadAsync())
-                {
-                    int id = reader.GetInt32(0);
-                    string name = reader.GetString(1);
-                    Console.WriteLine($"ID: {id}, Name: {name}");
-                }
+                    while (await reader.ReadAsync())
+                    {
+                        var item = new Dictionary<string, object>
+                        {
+                            ["stringId"] = reader.GetGuid(0),
+                            ["name"] = reader.GetString(1),
+                            ["sellerId"] = reader.GetGuid(2),
+                            ["dateAdded"] = reader.GetDateTime(3),
+                            ["price"] = reader.GetDouble(4),
+                            ["imageLocation"] = reader.GetString(5),
+                            ["category"] = reader.GetString(6),
+                            ["stock"] = reader.GetInt32(7)
+                        };
+						
+                        items.Add(item);
+                    }
+			
+
+                    return items;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Failed to connect to the database: {ex.Message}");
+                return items;
             }
         }
     }
