@@ -1,15 +1,7 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
 
-public static class Server
-{
-    public static void Run(string[] args)
-    {
-        var builder = WebApplication.CreateBuilder(args);
-        var app = builder.Build();
+app.MapGet("/", () => "Divenesh Shamugam");
+app.MapGet("/ramya", () => "Ramya Ramu");
 
-        app.MapGet("/", () => "Hello from Server.cs!");
-        app.Run();
-    }
-}
+app.Run();
