@@ -30,7 +30,7 @@ namespace MyProject.Database
                     {
                         var item = new Dictionary<string, object>
                         {
-                            ["stringId"] = reader.GetGuid(0),
+                            ["id"] = reader.GetGuid(0),
                             ["name"] = reader.GetString(1),
                             ["sellerId"] = reader.GetGuid(2),
                             ["dateAdded"] = reader.GetDateTime(3),
