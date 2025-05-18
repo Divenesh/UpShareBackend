@@ -1,7 +1,19 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 
-app.MapGet("/", () => "Divenesh Shamugam");
-app.MapGet("/ramya", () => "Ramya Ramu");
+public static class Server
+{
+    public static void Run(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
+        var app = builder.Build();
+        
+        app.MapGet("/", async context =>
+        {
+            
+        });
 
-app.Run();
+        app.Run();
+    }
+}

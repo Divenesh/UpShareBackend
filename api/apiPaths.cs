@@ -2,9 +2,7 @@ namespace MyProject.Api;
 
 
 public class apiPaths
-{
-    public static string GetCategoriesApi = "/api/categories";
-    
+{   
 public static List<Dictionary<string, object>> GetCategories(List<Dictionary<string, object>> items, string category)
 {
     try

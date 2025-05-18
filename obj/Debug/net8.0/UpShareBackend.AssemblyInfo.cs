@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("UpShareBackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3c48a6234624e2944d375ea0121c6c545ddbfa11")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ccfd2c1aa391ee5cdebbc806e99ad944989170d2")]
 [assembly: System.Reflection.AssemblyProductAttribute("UpShareBackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("UpShareBackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
