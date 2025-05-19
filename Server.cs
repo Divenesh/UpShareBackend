@@ -20,7 +20,6 @@ public static class Server
         app.MapGet("/home/{category}", async (HttpContext context) =>
         {
             var category = context.Request.RouteValues["category"]?.ToString() ?? string.Empty;
-            Console.WriteLine("The category is: " + category);
             var filteredItems = apiPaths.GetCategories(items, category);
             await context.Response.WriteAsJsonAsync(filteredItems);
         });
@@ -35,21 +34,28 @@ public static class Server
                 return;
             }
             var foundItem = apiPaths.GetItemById(items, guidId);
+            List<Dictionary<string, object>> itemList = null;
             if (foundItem != null)
             {
-                var itemList = new List<Dictionary<string, object>> { foundItem };
-                await context.Response.WriteAsJsonAsync(itemList);
+                itemList = new List<Dictionary<string, object>> { foundItem };
             }
             else
             {
                 context.Response.StatusCode = 404;
                 await context.Response.WriteAsync("Item not found");
+                return;
             }
-            
 
+            var sellerId = itemList?[0]?["sellerId"]?.ToString() ?? string.Empty;
+            var seller = apiPaths.GetSeller(items, sellerId);
+
+
+            var rating = apiPaths.GetRatings(items, id);
+
+            var specification = apiPaths.GetSpecification(items, id);
+
+            await context.Response.WriteAsJsonAsync(new { Items = itemList, Seller = seller, Ratings = rating, Specifications = specification });
         });
-        
-
 
         app.Run();
     }
