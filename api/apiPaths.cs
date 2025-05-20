@@ -1,4 +1,3 @@
-using System.Data.Common;
 using MyProject.Database;
 
 namespace MyProject.Api;
