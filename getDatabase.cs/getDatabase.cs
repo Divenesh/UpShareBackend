@@ -6,7 +6,7 @@ namespace MyProject.Database
     {
         private string connectionString = "Host=localhost;Port=5433;Username=postgres;Password=123456;Database=postgres";
 
-        private async Task<NpgsqlDataSource> ConnectDatabase()
+        private NpgsqlDataSource ConnectDatabase()
         {
             var dataSource = NpgsqlDataSource.Create(connectionString);
             return dataSource;
@@ -17,7 +17,7 @@ namespace MyProject.Database
             var items = new List<Dictionary<string, object>>();
             try
             {
-                await using var dataSource = await ConnectDatabase();
+                await using var dataSource = ConnectDatabase();
 
                 await using var command = dataSource.CreateCommand("SELECT * FROM items");
                 await using var reader = await command.ExecuteReaderAsync();
@@ -55,7 +55,7 @@ namespace MyProject.Database
             var seller = new List<Dictionary<string, object>>();
             try
             {
-                await using var dataSource = await ConnectDatabase();
+                await using var dataSource = ConnectDatabase();
 
                 await using var command = dataSource.CreateCommand("SELECT * FROM seller");
                 await using var reader = await command.ExecuteReaderAsync();
@@ -87,7 +87,7 @@ namespace MyProject.Database
             var ratings = new List<Dictionary<string, object>>();
             try
             {
-                await using var dataSource = await ConnectDatabase();
+                await using var dataSource = ConnectDatabase();
 
                 await using var command = dataSource.CreateCommand("SELECT * FROM rating");
                 await using var reader = await command.ExecuteReaderAsync();
@@ -117,7 +117,7 @@ namespace MyProject.Database
             var specifications = new List<Dictionary<string, object>>();
             try
             {
-                await using var dataSource = await ConnectDatabase();
+                await using var dataSource = ConnectDatabase();
 
                 await using var command = dataSource.CreateCommand("SELECT * FROM specification");
                 await using var reader = await command.ExecuteReaderAsync();

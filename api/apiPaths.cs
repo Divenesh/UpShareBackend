@@ -19,11 +19,11 @@ public class apiPaths
             return items;
         }
     }
-    public static Dictionary<string, object> GetItemById(List<Dictionary<string, object>> items, Guid id)
+    public static Dictionary<string, object> GetItemById(List<Dictionary<string, object>> items, string id)
     {
         try
         {
-            var item = items.FirstOrDefault(item => (Guid)item["id"] == id);
+            var item = items.FirstOrDefault(item => item["id"].ToString() == id);
             Console.WriteLine("The id is: ", id);
             return item ?? new Dictionary<string, object>();
         }
@@ -41,8 +41,6 @@ public class apiPaths
             var seller = new List<Dictionary<string, object>>();
             seller = db.getSellers().Result;
             var sellerItem = seller.FirstOrDefault(item => item["id"].ToString() == sellerId);
-
-            Console.WriteLine("The sellerItem: " + sellerItem["sellername"]);
             return sellerItem != null ? new List<Dictionary<string, object>> { sellerItem } : new List<Dictionary<string, object>>();
         }
         catch (Exception ex)
