@@ -1,5 +1,6 @@
 using MyProject.Api;
 using MyProject.Database;
+using UpShareBackend.centralizedApiRouting;
 
 public static class Server
 {
@@ -20,43 +21,16 @@ public static class Server
         app.MapGet("/home/{category}", async (HttpContext context) =>
         {
             var category = context.Request.RouteValues["category"]?.ToString() ?? string.Empty;
-            var filteredItems = apiPaths.GetCategories(items, category);
+            var filteredItems = RouteInfoProvider.GetInfoForCategories(items, category);
             await context.Response.WriteAsJsonAsync(filteredItems);
         });
 
         app.MapGet("/home/item/{id}", async (HttpContext context) =>
         {
             var id = context.Request.RouteValues["id"]?.ToString() ?? string.Empty;
-            if (!Guid.TryParse(id, out Guid guidId))
-            {
-                context.Response.StatusCode = 400;
-                await context.Response.WriteAsync("Invalid GUID format");
-                return;
-            }
-            var foundItem = apiPaths.GetItemById(items, guidId);
-            List<Dictionary<string, object>> itemList = null;
-            if (foundItem != null)
-            {
-                itemList = new List<Dictionary<string, object>> { foundItem };
-            }
-            else
-            {
-                context.Response.StatusCode = 404;
-                await context.Response.WriteAsync("Item not found");
-                return;
-            }
-
-            var sellerId = itemList?[0]?["sellerId"]?.ToString() ?? string.Empty;
-            var seller = apiPaths.GetSeller(items, sellerId);
-
-
-            var rating = apiPaths.GetRatings(items, id);
-
-            var specification = apiPaths.GetSpecification(items, id);
-
-            await context.Response.WriteAsJsonAsync(new { Items = itemList, Seller = seller, Ratings = rating, Specifications = specification });
+            var itemInfo = RouteInfoProvider.GetInfoForItemById(items, Guid.Parse(id));
+            await context.Response.WriteAsJsonAsync(itemInfo);
         });
-
         app.Run();
     }
 }
