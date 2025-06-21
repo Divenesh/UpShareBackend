@@ -2,13 +2,15 @@ using MyProject.Database;
 
 namespace MyProject.Api;
 
-
 public class apiPaths
 {
     public static GetDatabase db = new GetDatabase();
-    public static List<Dictionary<string, object>> GetCategories(List<Dictionary<string, object>> items, string category)
-    {
 
+    public static List<Dictionary<string, object>> GetCategories(
+        List<Dictionary<string, object>> items,
+        string category
+    )
+    {
         try
         {
             return items.Where(item => item["category"].ToString() == category).ToList();
@@ -19,7 +21,11 @@ public class apiPaths
             return items;
         }
     }
-    public static Dictionary<string, object> GetItemById(List<Dictionary<string, object>> items, string id)
+
+    public static Dictionary<string, object> GetItemById(
+        List<Dictionary<string, object>> items,
+        string id
+    )
     {
         try
         {
@@ -34,14 +40,20 @@ public class apiPaths
             return new Dictionary<string, object>();
         }
     }
-    public static List<Dictionary<string, object>> GetSeller(List<Dictionary<string, object>> items, string sellerId)
+
+    public static List<Dictionary<string, object>> GetSeller(
+        List<Dictionary<string, object>> items,
+        string sellerId
+    )
     {
         try
         {
             var seller = new List<Dictionary<string, object>>();
             seller = db.getSellers().Result;
             var sellerItem = seller.FirstOrDefault(item => item["id"].ToString() == sellerId);
-            return sellerItem != null ? new List<Dictionary<string, object>> { sellerItem } : new List<Dictionary<string, object>>();
+            return sellerItem != null
+                ? new List<Dictionary<string, object>> { sellerItem }
+                : new List<Dictionary<string, object>>();
         }
         catch (Exception ex)
         {
@@ -50,7 +62,10 @@ public class apiPaths
         }
     }
 
-    public static List<Dictionary<string, object>> GetRatings(List<Dictionary<string, object>> items, string itemId)
+    public static List<Dictionary<string, object>> GetRatings(
+        List<Dictionary<string, object>> items,
+        string itemId
+    )
     {
         try
         {
@@ -58,7 +73,9 @@ public class apiPaths
             ratings = db.getRatings().Result;
             var ratingItems = ratings.Where(rating => rating["itemid"].ToString() == itemId);
             // System.Console.WriteLine("Rating items: " + string.Join(", ", ratingItems.Select(r => r["rating"])));
-            return ratingItems.Any() ? ratingItems.ToList() : new List<Dictionary<string, object>>();
+            return ratingItems.Any()
+                ? ratingItems.ToList()
+                : new List<Dictionary<string, object>>();
         }
         catch (Exception ex)
         {
@@ -67,15 +84,22 @@ public class apiPaths
         }
     }
 
-    public static List<Dictionary<string, object>> GetSpecification(List<Dictionary<string, object>> items, string itemId)
+    public static List<Dictionary<string, object>> GetSpecification(
+        List<Dictionary<string, object>> items,
+        string itemId
+    )
     {
         try
         {
             var specifications = new List<Dictionary<string, object>>();
             specifications = db.getSpecification().Result;
-            var specificationItems = specifications.Where(specification => specification["itemid"].ToString() == itemId);
+            var specificationItems = specifications.Where(specification =>
+                specification["itemid"].ToString() == itemId
+            );
             // System.Console.WriteLine("Specification items: " + string.Join(", ", specificationItems.Select(r => r["details"])));
-            return specificationItems.Any() ? specificationItems.ToList() : new List<Dictionary<string, object>>();
+            return specificationItems.Any()
+                ? specificationItems.ToList()
+                : new List<Dictionary<string, object>>();
         }
         catch (Exception ex)
         {
@@ -84,4 +108,17 @@ public class apiPaths
         }
     }
 
+    public static async Task<Dictionary<string, object>> GetUser(string userId)
+    {
+        try
+        {
+            var userItem = await db.getUser(userId);
+            return userItem ?? new Dictionary<string, object>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to get user by ID: {ex.Message}");
+            return new Dictionary<string, object>();
+        }
+    }
 }

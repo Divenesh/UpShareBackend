@@ -4,7 +4,8 @@ namespace MyProject.Database
 {
     public class GetDatabase
     {
-        private string connectionString = "Host=localhost;Port=5433;Username=postgres;Password=123456;Database=postgres";
+        private string connectionString =
+            "Host=localhost;Port=5433;Username=postgres;Password=123456;Database=postgres";
 
         private NpgsqlDataSource ConnectDatabase()
         {
@@ -22,8 +23,6 @@ namespace MyProject.Database
                 await using var command = dataSource.CreateCommand("SELECT * FROM items");
                 await using var reader = await command.ExecuteReaderAsync();
 
-
-
                 while (await reader.ReadAsync())
                 {
                     var item = new Dictionary<string, object>
@@ -35,12 +34,11 @@ namespace MyProject.Database
                         ["price"] = reader.GetDouble(4),
                         ["imageLocation"] = reader.GetString(5),
                         ["category"] = reader.GetString(6),
-                        ["stock"] = reader.GetInt32(7)
+                        ["stock"] = reader.GetInt32(7),
                     };
 
                     items.Add(item);
                 }
-
 
                 return items;
             }
@@ -50,6 +48,7 @@ namespace MyProject.Database
                 return items;
             }
         }
+
         public async Task<List<Dictionary<string, object>>> getSellers()
         {
             var seller = new List<Dictionary<string, object>>();
@@ -68,13 +67,12 @@ namespace MyProject.Database
                         ["sellername"] = reader.GetString(1),
                         ["regnum"] = reader.GetString(2),
                         ["address"] = reader.GetString(3),
-                        ["contactnum"] = reader.GetInt64(5),
+                        ["contactnum"] = reader.GetString(5),
                     };
 
                     seller.Add(item);
                 }
                 return seller;
-
             }
             catch (Exception ex)
             {
@@ -82,6 +80,7 @@ namespace MyProject.Database
                 return seller;
             }
         }
+
         public async Task<List<Dictionary<string, object>>> getRatings()
         {
             var ratings = new List<Dictionary<string, object>>();
@@ -104,7 +103,6 @@ namespace MyProject.Database
                     ratings.Add(item);
                 }
                 return ratings;
-
             }
             catch (Exception ex)
             {
@@ -112,6 +110,7 @@ namespace MyProject.Database
                 return ratings;
             }
         }
+
         public async Task<List<Dictionary<string, object>>> getSpecification()
         {
             var specifications = new List<Dictionary<string, object>>();
@@ -134,15 +133,50 @@ namespace MyProject.Database
                     specifications.Add(item);
                 }
                 return specifications;
-
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Failed to connect to the database: {ex.Message}");
                 return specifications;
             }
+        }
 
+        public async Task<Dictionary<string, object>?> getUser(string userId)
+        {
+            try
+            {
+                await using var dataSource = ConnectDatabase();
 
-    }
+                await using var command = dataSource.CreateCommand(
+                    $"SELECT * FROM users WHERE id = '{userId}'"
+                );
+                await using var reader = await command.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    return new Dictionary<string, object>
+                    {
+                        ["id"] = reader.GetGuid(0),
+                        ["firstname"] = reader.GetString(1),
+                        ["lastname"] = reader.GetString(2),
+                        ["email"] = reader.GetString(3),
+                        ["profilePicture"] = reader.GetString(4),
+                        ["dateJoined"] = reader.GetDateTime(5),
+                        ["address"] = reader.GetString(6),
+                        ["city"] = reader.GetString(7),
+                        ["state"] = reader.GetString(8),
+                        ["country"] = reader.GetString(9),
+                        ["phoneNumber"] = reader.GetString(10),
+                    };
+                }
+                Console.WriteLine($"User with ID {userId} not found.");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to connect to the database: {ex.Message}");
+                return null;
+            }
+        }
     }
 }
