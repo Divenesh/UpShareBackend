@@ -121,4 +121,19 @@ public class apiPaths
             return new Dictionary<string, object>();
         }
     }
+
+    public static async Task<Dictionary<string, object>> CreateUser(object user)
+    {
+        try
+        {
+            var result = await db.createUser(user);
+            return result ?? new Dictionary<string, object>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to create user: {ex.Message}");
+            return new Dictionary<string, object>();
+        }
+    }
+    
 }

@@ -1,4 +1,3 @@
-using MyProject.Api;
 using MyProject.Database;
 using UpShareBackend.centralizedApiRouting;
 
@@ -47,6 +46,26 @@ public static class Server
                 var userId = context.Request.RouteValues["userId"]?.ToString() ?? string.Empty;
                 var userInfo = await RouteInfoProvider.GetUser(userId);
                 await context.Response.WriteAsJsonAsync(userInfo);
+            }
+        );
+
+        app.MapPost(
+            "/user/",
+            async (HttpContext context) =>
+            {
+                // Change this to explicitly request a Dictionary
+                var user = await context.Request.ReadFromJsonAsync<Dictionary<string, object>>();
+
+                if (user != null)
+                {
+                    var result = await RouteInfoProvider.CreateUser(user);
+                    await context.Response.WriteAsJsonAsync(result);
+                }
+                else
+                {
+                    context.Response.StatusCode = 400; // Bad Request
+                    await context.Response.WriteAsync("Invalid user data.");
+                }
             }
         );
         app.Run();

@@ -88,7 +88,6 @@ public class RouteInfoProvider
     {
         try
         {
-
             var user = new Dictionary<string, object>();
             user = await apiPaths.GetUser(userId);
             return user ?? new Dictionary<string, object>();
@@ -96,6 +95,21 @@ public class RouteInfoProvider
         catch (Exception ex)
         {
             Console.WriteLine($"Failed to get user by ID: {ex.Message}");
+            return new Dictionary<string, object>();
+        }
+    }
+
+    public static async Task<Dictionary<string, object>> CreateUser(object user)
+    {
+        try
+        {
+            var result = await apiPaths.CreateUser(user);
+            Console.WriteLine("ImHERE");
+            return result ?? new Dictionary<string, object>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to create user: {ex.Message}");
             return new Dictionary<string, object>();
         }
     }
