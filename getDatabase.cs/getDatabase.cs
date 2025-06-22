@@ -178,5 +178,75 @@ namespace MyProject.Database
                 return null;
             }
         }
+
+        public async Task<Dictionary<string, object>?> createUser(object user)
+        {
+            try
+            {
+                await using var dataSource = ConnectDatabase();
+
+                var userDict = user as Dictionary<string, object>;
+                if (userDict == null)
+                {
+                    Console.WriteLine("Invalid user data format.");
+                    return null;
+                }
+
+                var commandText =
+                    @"
+                    INSERT INTO users (id , firstname, lastname, email, profilePictureurl, dateJoined, address, city, state, country, phoneNumber)
+                    VALUES (@id, @firstname, @lastname, @email, @profilePicture, @dateJoined, @address, @city, @state, @country, @phoneNumber)
+                    RETURNING id";
+
+                await using var command = dataSource.CreateCommand(commandText);
+                // With this code:
+                Guid userId;
+                if (Guid.TryParse(userDict["id"].ToString(), out userId))
+                {
+                    command.Parameters.AddWithValue("id", userId);
+                }
+                else
+                {
+                    Console.WriteLine($"Invalid UUID format. Generated new ID: {userId}");
+                }
+                command.Parameters.AddWithValue(
+                    "firstname",
+                    ConvertToString(userDict["firstname"])
+                );
+                command.Parameters.AddWithValue("lastname", ConvertToString(userDict["lastname"]));
+                command.Parameters.AddWithValue("email", ConvertToString(userDict["email"]));
+                command.Parameters.AddWithValue(
+                    "profilePicture",
+                    ConvertToString(userDict["profilePicture"])
+                );
+                command.Parameters.AddWithValue("dateJoined", DateTime.UtcNow);
+                command.Parameters.AddWithValue("address", ConvertToString(userDict["address"]));
+                command.Parameters.AddWithValue("city", ConvertToString(userDict["city"]));
+                command.Parameters.AddWithValue("state", ConvertToString(userDict["state"]));
+                command.Parameters.AddWithValue("country", ConvertToString(userDict["country"]));
+                command.Parameters.AddWithValue(
+                    "phoneNumber",
+                    ConvertToString(userDict["phoneNumber"])
+                );
+
+                var newUserId = await command.ExecuteScalarAsync();
+                Console.WriteLine($"User created with ID: {newUserId}");
+                return new Dictionary<string, object> { ["id"] = newUserId };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to create user: {ex.Message}");
+                return null;
+            }
+        }
+
+        private string ConvertToString(object value)
+        {
+            if (value is System.Text.Json.JsonElement jsonElement)
+            {
+                return jsonElement.GetString() ?? jsonElement.ToString();
+            }
+            return value?.ToString() ?? string.Empty;
+        }
     }
 }
