@@ -53,7 +53,6 @@ public static class Server
             "/user/",
             async (HttpContext context) =>
             {
-                // Change this to explicitly request a Dictionary
                 var user = await context.Request.ReadFromJsonAsync<Dictionary<string, object>>();
 
                 if (user != null)
@@ -63,7 +62,7 @@ public static class Server
                 }
                 else
                 {
-                    context.Response.StatusCode = 400; // Bad Request
+                    context.Response.StatusCode = 400;
                     await context.Response.WriteAsync("Invalid user data.");
                 }
             }
