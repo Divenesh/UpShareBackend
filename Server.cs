@@ -123,7 +123,7 @@ public static class Server
                 }
                 else
                 {
-                    profilePictureUrl = "assets/user.png";
+                    profilePictureUrl = "/assets/images/user.png";
                 }
                 foreach (var key in form.Keys)
                 {
