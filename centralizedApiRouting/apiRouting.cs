@@ -113,4 +113,18 @@ public class RouteInfoProvider
             return new Dictionary<string, object>();
         }
     }
+
+    public static async Task<Dictionary<string, object>> UpdateUser(object user)
+    {
+        try
+        {
+            var result = await apiPaths.UpdateUser(user);
+            return result ?? new Dictionary<string, object>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to update user: {ex.Message}");
+            return new Dictionary<string, object>();
+        }
+    }
 }

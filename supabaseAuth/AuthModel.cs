@@ -144,12 +144,6 @@ public class AuthModel
             var _supabaseClient = CreateClient();
             await _supabaseClient.InitializeAsync();
 
-            // var response = await _supabaseClient.Storage.CreateBucket("upshare-user-items");
-            // if (response == null)
-            // {
-            //     throw new Exception("Bucket 'upshare-user-items' not found.");
-            // }
-
             var bucketName = "upshare-user-items";
             var publicFolder = "public";
 
@@ -158,9 +152,8 @@ public class AuthModel
             await stream.CopyToAsync(ms);
             var fileBytes = ms.ToArray();
 
-            string uniqueFileName = $"{publicFolder}/{userId}/{Guid.NewGuid()}_{file.FileName}";
-
-            Console.WriteLine($"Uploading file to bucket: {bucketName}, path: {uniqueFileName}");
+            string uniqueFileName =
+                $"{publicFolder}/{userId}/profilePictures/{Guid.NewGuid()}_{file.FileName}";
 
             string fileUrl;
 
