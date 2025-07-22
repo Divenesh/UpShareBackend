@@ -240,6 +240,74 @@ namespace MyProject.Database
             }
         }
 
+        public async Task<Dictionary<string, object>?> updateUser(object user)
+        {
+            try
+            {
+                await using var dataSource = ConnectDatabase();
+
+                var userDict = user as Dictionary<string, object>;
+                if (userDict == null)
+                {
+                    Console.WriteLine("Invalid user data format.");
+                    return null;
+                }
+
+                var commandText =
+                    @"  UPDATE users 
+                        SET firstname = @firstname, 
+                            lastname = @lastname, 
+                            email = @email, 
+                            profilePictureurl = @profilePicture, 
+                            dateJoined = @dateJoined, 
+                            address = @address, 
+                            city = @city, 
+                            state = @state, 
+                            country = @country, 
+                            phoneNumber = @phoneNumber
+                            WHERE id = @id";
+
+                await using var command = dataSource.CreateCommand(commandText);
+                Guid userId;
+                if (Guid.TryParse(userDict["id"].ToString(), out userId))
+                {
+                    command.Parameters.AddWithValue("id", userId);
+                }
+                else
+                {
+                    Console.WriteLine($"Invalid UUID format. Generated new ID: {userId}");
+                }
+
+                command.Parameters.AddWithValue(
+                    "firstname",
+                    ConvertToString(userDict["firstname"])
+                );
+                command.Parameters.AddWithValue("lastname", ConvertToString(userDict["lastname"]));
+                command.Parameters.AddWithValue("email", ConvertToString(userDict["email"]));
+                command.Parameters.AddWithValue(
+                    "profilePicture",
+                    ConvertToString(userDict["profilePicture"])
+                );
+                command.Parameters.AddWithValue("dateJoined", DateTime.UtcNow);
+                command.Parameters.AddWithValue("address", ConvertToString(userDict["address"]));
+                command.Parameters.AddWithValue("city", ConvertToString(userDict["city"]));
+                command.Parameters.AddWithValue("state", ConvertToString(userDict["state"]));
+                command.Parameters.AddWithValue("country", ConvertToString(userDict["country"]));
+                command.Parameters.AddWithValue(
+                    "phoneNumber",
+                    ConvertToString(userDict["phoneNumber"])
+                );
+
+                var newUserId = await command.ExecuteScalarAsync();
+                return new Dictionary<string, object> { ["id"] = newUserId };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to update user: {ex.Message}");
+                return null;
+            }
+        }
+
         private string ConvertToString(object value)
         {
             if (value is System.Text.Json.JsonElement jsonElement)

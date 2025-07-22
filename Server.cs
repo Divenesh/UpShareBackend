@@ -127,7 +127,7 @@ public static class Server
                 }
                 foreach (var key in form.Keys)
                 {
-                    if (key != "profilePicture") // Skip the file field
+                    if (key != "profilePicture")
                     {
                         user[key] = form[key].ToString();
                     }
@@ -144,6 +144,72 @@ public static class Server
                 );
 
                 var result = await RouteInfoProvider.CreateUser(user);
+                await context.Response.WriteAsJsonAsync(result ?? new Dictionary<string, object>());
+            }
+        );
+
+        app.MapPut(
+            "/user/",
+            async (HttpContext context) =>
+            {
+                if (!context.Request.HasFormContentType)
+                {
+                    context.Response.StatusCode = 400;
+                    await context.Response.WriteAsync("Content-Type must be multipart/form-data.");
+                    return;
+                }
+
+                Console.WriteLine("Updating user profile...");
+                var form = await context.Request.ReadFormAsync();
+                var user = new Dictionary<string, object>();
+
+                string profilePictureUrl = "";
+                var file = form.Files["profilePicture"];
+                if (file != null && file.Length > 0)
+                {
+                    Console.WriteLine("File received: " + file.FileName);
+                    try
+                    {
+                        var authModel = new AuthModel();
+                        var userId = form["id"].ToString();
+                        if (!string.IsNullOrEmpty(userId))
+                        {
+                            profilePictureUrl = await authModel.UpdateUserProfile(file, userId);
+                            Console.WriteLine($"File uploaded successfully: {profilePictureUrl}");
+                        }
+                        else
+                        {
+                            Console.WriteLine("UserId is required for profile picture upload.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"File upload error: {ex.Message}");
+                    }
+                }
+                else
+                {
+                    profilePictureUrl = "/assets/images/user.png";
+                }
+                foreach (var key in form.Keys)
+                {
+                    if (key != "profilePicture")
+                    {
+                        user[key] = form[key].ToString();
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(profilePictureUrl))
+                {
+                    user["profilePicture"] = profilePictureUrl;
+                }
+
+                Console.WriteLine(
+                    "Received user data: "
+                        + string.Join(", ", user.Select(kv => $"{kv.Key}: {kv.Value}"))
+                );
+
+                var result = await RouteInfoProvider.UpdateUser(user);
                 await context.Response.WriteAsJsonAsync(result ?? new Dictionary<string, object>());
             }
         );
